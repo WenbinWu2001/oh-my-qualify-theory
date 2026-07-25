@@ -1,0 +1,226 @@
+\section{Decision Theory}
+Statistical decision theory studies how to utilize sample information to make decisions such that risk is minimized. 
+Its basic components are the statistical model $\{P_\theta:\theta\in\Theta\}$, the action space $\mathcal{A}$, and the loss function $L$. Bayesian decision theory additionally introduces a prior distribution $\Lambda$ on the parameter space $\Theta$.
+
+\subsection{Decision problem}
+\subsubsection{Basic elements}
+\begin{itemize}
+    \item unknown parameter (also called ``state of nature'') $\theta$. Denote parameter space as $\Theta$.
+    \item samples $x$ of a random variable $X$ with distribution $P_\theta$. Denote sample space as $\mathcal{X}$.
+    \item action (decision) $a$ with action space $\mathcal{A}$. In estimation problems, $\mathcal{A} = \Theta$.
+    \item loss function $L:\Theta \times \mathcal{A} \to \R^+$ where $L(\theta, a)$ characterizes the consequence of decision $a$ when the parameter takes value $\theta$.
+    \item decision rule/function: $d:\mathcal{X} \to \mathcal{A}$ where $d(x)$ is the action taken when $X=x$ is observed. Denote the set of all decision rules as $\mathcal{D}$. In estimation problems, a decision rule is called an estimator.
+    \begin{itemize}
+        \item non-randomized (deterministic): $d(x)$ takes a single value in $\mathcal{A}$.
+        \item randomized: $d(x)$ is a probability distribution over the action space $\mathcal{A}$. $d(a|x): \mathcal{A} \times \mathcal{X} \to [0,1]$ is the probability of taking action $a$ when $X=x$ is observed. In this case, the loss function is $L(\theta, d(\cdot|x)) = \E_{a \sim p(a|x)}[L(\theta, a)]$ (i.e., expectation over the action space). Note that a non-randomized rule is just a randomized rule that assigns probability $1$ to a single action.
+        \item If the action space $\mathcal{A}$ is convex and the loss function $L(\theta,a)$ is convex in the action $a$, then every randomized decision rule can be replaced by a nonrandomized rule that is at least as good -- and uniformly better when the loss is strictly convex. Under these conditions, it suffices to consider nonrandomized rules. (Caveat: These convexity conditions often fail when the action space is discrete or the loss is nonconvex, as commonly occurs in hypothesis-testing problems with $0$-$1$ loss.)
+    \end{itemize}
+    \item Any decision problem is defined by $(\Theta, \mathcal{A}, L)$, that is, states, actions, and a loss function.
+\end{itemize}
+
+\subsection{What are ``good'' decision rules?}
+\subsubsection{Basic elements}
+\begin{itemize}
+    \item risk function $R:\Theta \times \mathcal{D} \to \R^+$ where $R(\theta,d) = \E_{X \sim P_\theta}[L(\theta, d(X)]$ is the expected loss of decision rule $d$ at parameter value $\theta$. \footnote{For randomized decision rules, $R(\theta,d) = \int_\mathcal{X}\int_\mathcal{A} L(\theta,a)p(a|x)p(x|\theta) dadx$ is a double integral over the sample space and action space. You can exchange the integrals to facilitate calculations.}
+    \item A decision rule $d$ is \emph{inadmissible} if there exists a rule $d'$ such that $R(\theta, d') \leq R(\theta, d)$ for all $\theta$ and $R(\theta, d') < R(\theta, d)$ for some $\theta$. In other words, $d'$ is uniformly better than\footnote{More precisely, $d'$ is uniformly no worse than $d$ and strictly better for at least one $\theta$.}, or \emph{dominates}, $d$.
+    \item A decision rule $d$ is \emph{admissible} if it is not inadmissible (i.e., there is no rule that dominates $d$). For a particular problem, there is usually a class of admissible decision rules which are best at different values of $\theta$.
+    \item The class of admissible decision rules is often too large for practical optimization, so we restrict attention to a class $\mathcal{D}$ and seek an optimal rule within it. A decision rule $d$ is \emph{optimal} in $\mathcal{D}$ if $R(\theta, d) \leq R(\theta, d')$ for all $\theta \in \Theta$ and for all $d' \in \mathcal{D}$. In other words, $d$ achieves minimal risk everywhere in the parameter space $\Theta$.
+\end{itemize}
+
+In most problems, there is no optimal decision rule. Hence we use different principles to characterize optimality.
+
+\subsubsection{Minimax principle} % move under Bayesian?
+Minimax principle considers the worst-case risk in the parameter space $\Theta$. One decision rule $d_1$ is better than another $d_2$ if $\sup_{\theta\in \Theta} R(\theta,d_1) < \sup_{\theta\in \Theta} R(\theta,d_2)$.
+
+A decision rule $d_M$ is \emph{minimax} if
+\[
+\sup_{\theta \in \Theta} R(\theta, d_M) = \inf_{d \in \mathcal{D}} \{\sup_{\theta \in \Theta} R(\theta, d)\}.
+\]
+In other words, among all decision rules in $\mathcal{D}$, $d_M$ has the smallest worst-case risk. The quantity on the right hand side is called the \emph{minimax value} of the problem.
+
+\begin{mybox}
+    \textbf{Fact 1:} If the minimax estimator is unique (i.e., uniquely achieves the minimax value), then it is admissible.
+    
+    \textbf{Fact 2:} Any estimator better than a minimax estimator is also minimax.
+    \footnote{Here, ``better'' means pointwise no worse on $\Theta$. The two estimators have the same maximum risk, equal to the minimax value. If the maximum risk of the better estimator is \emph{attained}, their risks coincide at some parameter value at which the minimax value is attained.}
+\end{mybox}
+
+\subsubsection{Bayesian principle}
+Bayesian principle considers the expected risk over a prior distribution on the parameter space $\Theta$, rather than seeing $\theta$ as an unknown but fixed parameter.
+
+
+Denote $\Lambda$ as the prior distribution of $\theta$ over $\Theta$. The \emph{Bayes risk of $d$ with respect to a given prior $\Lambda$} is 
+\[
+R(\Lambda, d) = \E_{\theta \sim \Lambda}[R(\theta, d)].
+\]
+
+A \emph{Bayesian decision rule} with respect to $\Lambda$, denoted by $d_\Lambda$, is a rule achieving the minimal Bayes risk in $\mathcal{D}$, namely,
+\[R(\Lambda, d_\Lambda) = \inf_{d\in \mathcal{D}} R(\Lambda, d).\]
+The quantity on the right hand side is called the \emph{Bayes risk}. In estimation problems, we refer to the Bayes rule as the \emph{Bayes estimator} of $\theta$.
+
+\textbf{Caveat:} Admissibility and minimaxity are frequentist concepts, defined independently of any prior distribution. In particular, neither the admissibility of a decision rule $d$ nor its minimax value depends on $\Lambda$. On the other hand, whether a rule is Bayes generally depends on the chosen prior.
+
+\subsubsection{How to find a Bayes rule?}
+Remember that the goal is to find the action $d(x)$ for each given $x\in \mathcal{X}$. Notice that the Bayes risk can be rewritten as
+\[
+R(\Lambda, d) 
+= \int_\Theta 
+\Big[ \int_\mathcal{X} L(\theta, d(x)) p(x|\theta) dx \Big]
+\lambda(\theta) d\theta
+= \int_\mathcal{X} 
+\underbrace{\Big[\int_\Theta L(\theta, d(x)) p(\theta|x) d\theta \Big]}_{\text{posterior expected loss}}
+p(x) dx,
+\]
+where $p(x) = \int_\Theta p(x|\theta) \lambda(\theta) d\theta$ is the marginal probability of $x$.
+
+Therefore, the Bayes rule $d_\Lambda(x)$ can be found by minimizing the posterior expected loss at each $x \in \mathcal{X}$:
+\[
+d_\Lambda(x) = \argmin_{a \in \mathcal{A}} \int_\Theta L(\theta, a) p(\theta|x) d\theta.
+\]
+
+\begin{mybox}
+    \textbf{Finding the Bayes rule given a prior $\Lambda$ by minimizing posterior expected loss.}
+    \begin{enumerate}[leftmargin=36pt]
+        \item[Step 1:] Find the posterior distribution $p(\theta|x)$ by conjugacy or using the kernel of $p(x,\theta) = p(x|\theta)\lambda(\theta)$.
+        \footnote{Note here that the prior distribution $\Lambda$ may not be proper (i.e., $\int_\Theta d\Lambda(\theta)=1$). When $\Lambda$ is an improper prior (i.e., $\int_\Theta d\Lambda(\theta)=\infty$), a Bayes rule can still be obtained as long as the posterior $p(\theta|x)$ is proper. In this case, the rule is called a \emph{generalized Bayes rule}. We can still check the kernel to identify the class of $p(\theta|x)$.}
+        \item[Step 2:] Calculate the posterior expected loss 
+        \[
+        G(a) :=\E[L(\theta, a)|x] = \int_\Theta L(\theta, a) p(\theta|x) d\theta
+        \]
+        \item[Step 3:] Find $d_\Lambda(x) = \argmin_{a} G(a)$ for each $x \in \mathcal{X}$. Common approaches involve setting $\frac{d}{da} G(a) = 0$, checking the positivity of coefficients, and using the Lagrange method.
+        \footnote{
+            If $\mathcal A$ is convex and $L(\theta,a)$ is convex in $a$, then it sufﬁces to consider only non-randomized Bayes rules. (See Notes p.62.)
+        }
+    \end{enumerate}
+
+    To calculate the Bayes risk, use either of the following two equivalent formulations, whichever is easier:
+    \begin{align*}
+        R(\Lambda,d)
+        &= \E_{\theta\sim\Lambda}[R(\theta,d)]
+        = \E_{\theta\sim\Lambda}\left[
+        \E_{X\sim p(x | \theta)}
+        \left[L\left(\theta,d(X)\right)\right]
+        \right],\ \text{or}\\
+        R(\Lambda,d)
+        &= \E_{X\sim p(x)}\left[
+        \E_{\theta\sim p(\theta | X)}
+        \left[L\left(\theta,d(X)\right) | X\right]
+        \right].
+    \end{align*}
+\end{mybox}
+
+% under squared error loss, the Bayes estimator is the unique posterior mean, provided the posterior second moment $\E[\theta^2|X]$ is finite.
+
+See Tables \ref{tab:common_bayes_rules} and \ref{tab:conjugate-bayes} for common Bayes rules and Bayes risks.
+
+% \textbf{Some tricks when solving problems:}
+% \begin{itemize}
+%     \item When comparing two Bayes rules, it's usually easier to study the \emph{ratio} of their Bayes risks.
+%     \item To show a decision rule is not a Bayes rule, we can argue that its risk is strictly larger than the Bayes risk.
+% \end{itemize}
+
+\subsubsection{Relationship between minimax rule and Bayes rule}
+A prior $\Lambda_0$ for which $R(\Lambda, d_\Lambda)$ is maximized is called a \emph{least favorable prior}, namely,
+\[
+R(\Lambda_0, d_{\Lambda_0}) = \sup_\Lambda R(\Lambda, d_\Lambda).
+\]
+In other words, among all priors, the least favorable prior(s) yield the largest Bayes risk.
+
+
+\textbf{Theorem 1.6.}
+Suppose that $\Lambda$ is a prior distribution on $\Theta$ such that
+\[
+\mathcal{R}(\Lambda, d_\Lambda)
+\stackrel{\text{def}}{=} \int_{\Theta} R(\theta, d_\Lambda)\, d\Lambda(\theta)
+= \sup_{\theta} R(\theta, d_\Lambda).
+\]
+Then
+\begin{enumerate}
+    \item[(i)] $d_\Lambda$ is minimax, and $\mathcal{R}(\Lambda, d_\Lambda)$ is the minimax value.
+    \item[(ii)] If $d_\Lambda$ is the unique Bayes rule with respect to $\Lambda$, then $d_\Lambda$ is the unique minimax rule.
+    \item[(iii)] $\Lambda$ is least favorable.
+\end{enumerate}
+
+In other words, \textbf{if a Bayes rule $d_\Lambda$ has constant risk $\Lambda$-a.e., then $d_\Lambda$ is minimax and $\Lambda$ is least favorable.} 
+\footnote{Not every constant-risk rule is minimax; a constant-risk rule that is also Bayes is minimax.}
+\footnote{The rationale is the inequality:
+    \[
+    \sup_\theta R(\theta,d)
+    \geq
+    R(\Lambda,d)
+    \geq
+    R(\Lambda,d_\Lambda)
+    =
+    \sup_\theta R(\theta,d_\Lambda),
+    \]
+    where the last equality holds by the condition in the theorem.}
+See Figure \ref{fig:theorem-1.6} for a schematic illustration.
+    
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{figures/theorem-1.6.png}
+    \caption{
+    Intuition for Theorem 1.6. A generic Bayes rule need not be minimax (left). If the prior is concentrated on the maximum-risk points of its Bayes rule, that rule is minimax and the prior is least favorable (center). A constant-risk Bayes rule is a special equalizer case (right).
+    }
+    \label{fig:theorem-1.6}
+\end{figure}
+
+
+% --- other interpretations of Theorem 1.6, do not delete ---
+% [Inaccurate. The theorem is a sufficient condition; it does not say that every minimax rule must arise this way.] In other words, \textbf{the minimax rule is the Bayes rule associated with the prior under which the Bayes risk is constant a.e in the parameter space} (equivalently, equals its maximum in the parameter space), and this prior is least favorable.\footnote{Not any constant risk can be minimax. It is minimax if it corresponds to a Bayes rule.}
+
+% This is a delicate equilibrium: $\Lambda$ determines $d_\Lambda$, and the resulting risk $R(\theta, d_\Lambda)$ must attain its maximum where $\Lambda$ places its mass.
+
+
+
+
+
+\begin{mybox}
+    \textbf{Finding minimax rules.}
+    \begin{enumerate}
+        \item Direct method: find $d_M$ such that it attains the smallest worst-case risk, namely,
+        \[
+        \sup_{\theta \in \Theta} R(\theta, d_M) = \inf_{d \in \mathcal{D}} \sup_{\theta \in \Theta} R(\theta, d).
+        \]
+        Specifically, first find an expression for $\sup_\theta R(\theta, d)$ (parametrized by $d$), then find the $d$ that minimizes this maximum risk.
+        \item Use Theorem 1.6 to find a Bayes rule $d_\Lambda$ such that $R(\Lambda, d_\Lambda) = \sup_{\theta \in \Theta} R(\theta, d_\Lambda).$
+        \item \textbf{(Most useful)} If $d_\Lambda$ is Bayes with constant risk\footnote{A rule with constant risk is called an \emph{equalizer rule}.}, then $d_\Lambda$ is minimax.
+        \begin{enumerate}[leftmargin=48pt]
+            \item[Step 1:] Find the Bayes rule $d_\Lambda$ for a given class of prior distribution $\Lambda$'s.
+            \item[Step 2:] Calculate the risk function $R(\theta, d_\Lambda)$ of $d_\Lambda$.
+            \item[Step 3:] Find the cases (structure of the prior $\Lambda$) where $R(\theta, d_\Lambda)$ is independent of $\theta$, that is, where $R(\theta, d_\Lambda)$ is constant a.e. w.r.t. $\Lambda$.
+            \item[Step 4:] These cases give the least favorable prior(s) $\Lambda$ and the minimax rule(s) $d_\Lambda$.
+            \item[Remark:] \underline{The key is to show a rule is both a Bayes rule and an equalizer rule.} Alternatively, we can first find an equalizer rule $d^*$ such that $R(\theta, d^*)$ is constant in $\theta$, then show $d^*$ is Bayes with respect to some proper prior $\Lambda$. See Examples 1.21 \& 1.27.
+        \end{enumerate}
+        \item (Theorem 1.13, long-version notes) Construct a sequence of priors whose Bayes risks increase to a limit $r$; this lower-bounds the minimax risk by $r$. If you can find an estimator whose worst-case risk attains $r$, then it must be minimax, and the priors form a least favorable sequence. See Example 1.22.
+        \item (Lemma 1.3, long-version notes) Prove that an estimator is minimax over a simpler subclass $P_0$, then extend the result to a larger class $P_1$ by showing that its worst-case risk remains unchanged when the model class is enlarged.
+        The subclass $P_0$ is usually chosen to make the minimax risk finite.
+        See Examples 1.23 \& 1.24.
+    \end{enumerate}
+\end{mybox}
+
+
+% Bayes estimators with proper priors are minimax and admissible
+% admissibility: pointwise dominance
+% minimaxity: global dominance
+
+\subsubsection{What types of decision rules are admissible?}
+\begin{mybox}
+\textbf{Finding admissible rules.}
+\begin{enumerate}
+    \item (By def.) Any decision rule $d$ that \emph{uniquely} minimizes $R(\theta, d)$ for \emph{some} $\theta \in \Theta$.
+    \item (Minimax rules.) A \emph{unique} minimax rule is admissible.
+    \item (Theorem 1.7: Bayes rules.) Any \emph{unique} Bayes rule with \emph{finite} Bayes risk is admissible. In other words, so long as a rule is \emph{uniquely} Bayes under \emph{some} prior distribution, it is admissible. 
+    \footnote{Again, admissibility has nothing to do with the prior. It is admissible relative to the entire parameter space $\Theta$.}
+    \\(Theorem 1.10: Bayes rules.) Any Bayes rule with \emph{finite} Bayes risk is admissible (uniqueness is no longer needed), given the conditions: (1) the risk function $R(\theta,d)$ is continuous in $\theta$ for all $d\in \mathcal{D}$, and (2) the prior $\Lambda$ gives positive probability to any open subset of $\Theta$. 
+    \footnote{i.e., the support of $\Lambda$ is $\Theta$. This does not mean $\Lambda({\theta})>0$ for every $\theta$; a continuous prior distribution assigns zero probability to individual points while still having full support. Together with continuity, the positive-probability condition prevents a strict risk improvement on a set of $\Lambda$-measure zero, which yields the same Bayes risk but kills admissibility.}
+    \footnote{The result also holds for generalized Bayes rule.}
+    \item (Theorem 1.8: linear estimators.) Let $X$ have mean $\theta$ and variance $\sigma^2$. Under squared-error loss, a linear estimator $aX+b$ of $\theta$ is inadmissible if $a<0$, $a>1$, or $a=1$ with $b\neq 0$. Thus, the only potentially admissible linear estimators of $\theta$ are $\{X,\ b,\ aX+b\text{ with }0<a<1\}$, where every constant estimator $b$ is admissible and $X$ is admissible within the class of linear estimators.
+    \footnote{For a random sample $X_1,\ldots,X_n$, the theorem applies to linear estimators $a\bar X+b$ by taking $X=\bar X$, for which $\E[\bar{X}] = \theta,\ \Var(\bar{X})=\sigma^2/n$.}
+    \\(Theorem 1.9: sample mean estimator.) If $X_1, \ldots, X_n \stackrel{i.i.d.}{\sim} N(\theta, \sigma^2)$ with $\sigma^2$ known, then, under squared error loss, $\bar{X}$ is an admissible estimator of $\theta$.
+    \footnote{More generally, let $X_1,\ldots,X_n \stackrel{i.i.d}{\sim} N_k(\mu,\Sigma)$, where $\Sigma$ is known and positive definite. Under squared-error loss, the sample mean $\bar{X}$ is admissible when $k\leq 2$ but inadmissible when $k\geq 3$; the latter result is the Stein phenomenon.}
+\end{enumerate}
+\end{mybox}
+
+
+% trick: Theorem 1.9: continuity of risk fun. + contradiction b/w admissibility and bayes

@@ -1,0 +1,222 @@
+\documentclass{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% Page Layout and Typography %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{rotating}
+\usepackage{indentfirst}
+\usepackage{parskip}
+\usepackage{pslatex}
+\usepackage{setspace}
+\geometry{
+    left=1in,
+    right=1in,
+    top=0.8in,
+    bottom=0.8in,
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% Figures, Captions, and Lists %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage[font=small, labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{enumitem} % set configuration for list
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Math Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{dsfont}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title Helpers %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{titling}
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \par\end{center}
+    \begin{center}\large#1\end{center}\vspace{-3.5em}
+    \vskip0.5em}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Colors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{xcolor}
+\newcommand{\red}{\textcolor{red}}
+\newcommand{\blue}{\textcolor{blue}}
+\newcommand{\green}{\textcolor{green}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% Framed Blocks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% colored block, credit to Kevin Z. Lin
+\definecolor{col0}{rgb}{0.950,0.930,0.855} %gray/beige
+\usepackage{mdframed}
+\newenvironment{block}
+{	\begin{center}
+    \vspace{1em}
+   	\begin{mdframed}[
+    backgroundcolor=col0,
+    topline=false,
+    bottomline=false,
+    rightline=false,
+    leftline=false,
+    skipabove=20pt,  % space before
+    skipbelow=20pt   % space after
+    ]
+}
+{
+   	\end{mdframed} 
+   	\end{center}
+}
+
+% boxed text
+\newenvironment{mybox}{%
+  \par\addvspace{10pt}% space that survives right after \section
+  \begin{mdframed}[skipabove=0pt,skipbelow=10pt]%
+}{%
+  \end{mdframed}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% Theorem Environments %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Define a custom theorem style that places the title on a separate line
+\newtheoremstyle{break}
+  {\topsep}   % Space above
+  {\topsep}   % Space below
+  {\itshape}  % Body font
+  {}          % Indent amount
+  {\bfseries} % Theorem head font
+  {.}         % Punctuation after theorem head
+  {\newline}  % Space after theorem head (THIS IS THE LINEBREAK)
+  {}          % Theorem head spec
+
+% Apply this style and define 'Fact'
+\theoremstyle{break}
+\newtheorem*{fact}{Fact} % Define an unnumbered 'Fact' environment
+\newtheorem{Fact}{Fact}  % numbered environ
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Links %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[colorlinks=true,
+            linkcolor=blue,
+            urlcolor=blue,
+            citecolor=blue]{hyperref}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Notation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Number systems and common spaces
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\E}{\ensuremath{\mathbb{E}}}
+\newcommand{\F}{\ensuremath{\mathcal{F}}}
+
+% Bold random vectors / matrices
+\newcommand{\bX}{\ensuremath{\mathbf{X}}}
+\newcommand{\bY}{\ensuremath{\mathbf{Y}}}
+\newcommand{\bZ}{\ensuremath{\mathbf{Z}}}
+
+% Basic math shortcuts
+\newcommand{\st}{\ensuremath{\text{ s.t. }}}
+\newcommand{\dd}{\ensuremath{\mathrm{d}}}
+
+% Delimiters
+\newcommand{\p}[1]{\ensuremath{\left(#1\right)}}
+\newcommand{\br}[1]{\ensuremath{\left\{#1\right\}}}
+\newcommand{\sbr}[1]{\ensuremath{\left[#1\right]}}
+\newcommand{\abs}[1]{\ensuremath{\left|#1\right|}}
+\newcommand{\norm}[1]{\ensuremath{\left\lVert#1\right\rVert}}
+\newcommand{\ip}[1]{\ensuremath{\left\langle #1 \right\rangle}}
+\newcommand{\ceil}[1]{\ensuremath{\left\lceil#1\right\rceil}}
+\newcommand{\floor}[1]{\ensuremath{\left\lfloor#1\right\rfloor}}
+
+% Probability and statistics
+\newcommand{\Prob}[2]{\ensuremath{\mathbb{P}_{#1}\left(#2\right)}}
+\newcommand{\Ind}[2]{\ensuremath{\mathbbm{1}_{#1}\left(#2\right)}}
+\newcommand{\iid}{\ensuremath{\mathrm{i.i.d.}}}
+\newcommand{\iidsim}{\ensuremath{\overset{\mathrm{i.i.d.}}{\sim}}}
+\newcommand{\cdf}{\ensuremath{\mathrm{c.d.f.}}}
+\newcommand{\pdf}{\ensuremath{\mathrm{p.d.f.}}}
+\newcommand{\pmf}{\ensuremath{\mathrm{p.m.f.}}}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Bernoulli}{Bernoulli}
+\DeclareMathOperator{\Binomial}{Binomial}
+\DeclareMathOperator{\Geometric}{Geometric}
+\DeclareMathOperator{\Multinomial}{Multinomial}
+\DeclareMathOperator{\NegativeBinomial}{NegativeBinomial}
+
+% Linear algebra and geometry
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\aff}{aff}
+\newcommand{\op}{\ensuremath{\mathrm{op}}}
+
+% Optimization
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+\author{Wenbin Wu}
+\title{BIOS762 Review}
+
+
+\begin{document}
+\maketitle
+
+% --- disclaimer ---
+% Paragraph 1: role of these notes
+The following notes are based on the lecture slides of BIOS761 (Advanced Probability and Statistical Inference II) at UNC Chapel Hill. They are compiled from the author's \emph{personal understanding} of the course material and aim to summarize the key results, highlight connections among the main concepts and theorems, and collect useful problem-solving strategies.
+
+% Paragraph 2: suggested use
+These notes are \emph{not} intended to be a comprehensive summary of the lecture slides, but rather a supplementary resource. They are most useful as a review document after a first pass through the lecture slides or as a quick reference while working through exam problems.
+
+For simplicity, some notation differs from that used in the lecture slides. If any statement is unclear or appears incorrect, please verify it against the course materials and consult other reliable references. We also encourage the use of AI assistants together with these notes and the relevant course materials to clarify concepts, fill in omitted details, and answer questions that arise while studying.
+
+% Paragraph 3: acknowledgment and contributions
+We thank Dr. Ethan Alt for sharing his abridged BIOS761 notes through the GitLab student repository, portions of which have been adapted in this document. 
+We warmly welcome corrections, suggestions, and contributions from readers. 
+If you would like to contribute, please submit a pull request through the GitHub repository: \url{https://github.com/WenbinWu2001/BIOS761-Review}.
+
+\tableofcontents
+\newpage
+
+% --- main content ---
+\include{sections/decision_theory}
+\include{sections/misc.tex}
+
+
+
+\end{document}

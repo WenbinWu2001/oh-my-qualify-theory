@@ -1,0 +1,153 @@
+\section{Miscellanea}
+
+A more comprehensive collection of commonly used mathematical tools is available in the BIOS762 review notes:
+\url{https://github.com/WenbinWu2001/BIOS762-Review}.
+
+
+\subsection{Common Bayesian results}
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{l|l}
+        \toprule
+        \textbf{Loss function} & \textbf{Bayes rule} \\
+        \midrule
+        Weighted squared error loss: $L(\theta, a) = k(\theta) \|\theta-a\|_2^2$\quad & $d_\Lambda(x) = \frac{\E[k(\theta) \theta|X=x]}{\E[k(\theta)|X=x]}$ = posterior weighted mean\\
+        \midrule
+        Squared error loss: $L(\theta, a) = \|\theta-a\|_2^2$ &  $d_\Lambda(x) = \E[\theta | X=x]$ = posterior mean\\
+        \midrule
+        Absolute error loss: $L(\theta, a) = |\theta - a|$ & $d_\Lambda(x) = \text{median}(\theta|X=x)$ = posterior median\\
+        \midrule
+        0-1 loss: $L(\theta, a) = \mathbf{1}\{\theta \neq a\}$ & $d_\Lambda(x) = \argmax_\theta\ p(\theta|X=x)$ = posterior mode\\
+        \bottomrule
+    \end{tabular}
+    \caption{Common Bayes rules.}
+    \label{tab:common_bayes_rules}
+\end{table}
+
+\begin{itemize}
+    \item If $L(\theta,a)$ is convex in $a$ (for every fixed $\theta$), it suffices to consider only deterministic Bayes rules.
+    \item If $L(\theta,a)$ is strictly convex in $a$ and posterior expected loss $\E_{\theta|X}[L(\theta,a)|X=x]$ is finite for some $a$, then the Bayes estimator is unique.
+\end{itemize}
+
+
+
+\begin{sidewaystable}[p]
+\centering
+\small
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{4pt}
+
+\begin{tabular}{%
+>{\raggedright\arraybackslash}p{0.10\linewidth}
+>{\raggedright\arraybackslash}p{0.16\linewidth}
+>{\raggedright\arraybackslash}p{0.06\linewidth}
+>{\raggedright\arraybackslash}p{0.18\linewidth}
+>{\raggedright\arraybackslash}p{0.40\linewidth}}
+\toprule
+\textbf{Conjugate pair} &
+\textbf{Sampling model} &
+\textbf{Unknown} &
+\textbf{Prior (loss)} &
+\textbf{Posterior / mean / Bayes rule / Bayes risk} \\
+\midrule
+
+\textbf{Normal--Normal} (mean, $\sigma^2$ known)
+&
+$x_1,\dots,x_n\mid\theta \overset{iid}{\sim} N(\theta,\sigma^2)$
+&
+$\theta$
+&
+$\theta\sim N(\mu_0,\tau_0^2)$;\quad $L(\theta,a)=(\theta-a)^2$
+&
+\parbox[t]{\linewidth}{%
+Posterior: $\theta\mid x\sim N(\mu_n,\tau_n^2)$,\;
+$\tau_n^2=\big(\tfrac{1}{\tau_0^2}+\tfrac{n}{\sigma^2}\big)^{-1}$.\\
+Mean: $\mu_n=w\mu_0+(1-w)\bar x$, \;
+$w=\dfrac{1/\tau_0^2}{1/\tau_0^2+n/\sigma^2}=\dfrac{\sigma^2}{\sigma^2+n\tau_0^2}$.\\
+Bayes rule: $d_B(x)=\mu_n$.\\
+Bayes risk: $r_B=\E[\Var(\theta\mid X)]=\tau_n^2=\dfrac{\tau_0^2\sigma^2}{\sigma^2+n\tau_0^2}$.} \\
+
+\midrule
+
+\textbf{Binomial--Beta} (proportion)
+&
+$Y\mid p\sim \mathrm{Bin}(n,p)$
+&
+$p$
+&
+$p\sim \mathrm{Beta}(\alpha,\beta)$;\quad $L(p,a)=(p-a)^2$
+&
+\parbox[t]{\linewidth}{%
+Posterior: $p\mid y\sim \mathrm{Beta}(\alpha+y,\beta+n-y)$.\\
+Mean: $\E[p\mid y]=\dfrac{\alpha+y}{\alpha+\beta+n}
+= w\,\dfrac{\alpha}{\alpha+\beta}+(1-w)\,\dfrac{y}{n}$,\;
+$w=\dfrac{\alpha+\beta}{\alpha+\beta+n}$.\\
+Bayes rule: $d_B(y)=\E[p\mid y]$.\\
+Bayes risk: $r_B=\E[\Var(p\mid Y)]
+=\dfrac{\alpha\beta}{(\alpha+\beta)(\alpha+\beta+1)(\alpha+\beta+n)}$.} \\
+
+\midrule
+
+
+\textbf{Poisson--Gamma} (rate)
+&
+$X_1,\dots,X_n\mid \lambda \overset{iid}{\sim} \mathrm{Pois}(\lambda)$
+&
+$\lambda$
+&
+$\lambda\sim \mathrm{Gamma}(a,b)$ (shape/rate);\quad $L(\lambda,a_0)=(\lambda-a_0)^2$
+&
+\parbox[t]{\linewidth}{%
+Let $S=\sum_{i=1}^n x_i$. Posterior:
+$\lambda\mid x\sim \mathrm{Gamma}(a+S,b+n)$.\\
+Mean: $\E[\lambda\mid x]=\dfrac{a+S}{b+n}
+= w\,\dfrac{a}{b}+(1-w)\,\bar x$,\;
+$w=\dfrac{b}{b+n}$.\\
+Bayes rule: $d_B(x)=\E[\lambda\mid x]$.\\
+Bayes risk: $r_B=\E[\Var(\lambda\mid X)]
+=\E\big[\tfrac{a+S}{(b+n)^2}\big]=\dfrac{a}{b(b+n)}$.} \\
+
+\midrule
+
+\textbf{Exponential--Gamma} (rate)
+&
+$X_i\mid \lambda \overset{iid}{\sim} \mathrm{Exp}(\lambda)$
+&
+$\lambda$
+&
+$\lambda\sim \mathrm{Gamma}(a,b)$;\quad $L(\lambda,a_0)=(\lambda-a_0)^2$
+&
+\parbox[t]{\linewidth}{%
+Let $T=\sum_{i=1}^n x_i$. Posterior:
+$\lambda\mid x\sim \mathrm{Gamma}(a+n,b+T)$.\\
+Mean: $\E[\lambda\mid x]=\dfrac{a+n}{b+T}$.\\
+Bayes rule: $d_B(x)=\E[\lambda\mid x]$.\\
+Bayes risk: $r_B=\E[\Var(\lambda\mid X)]
+=\E\big[\tfrac{a+n}{(b+T)^2}\big]$.} \\
+
+\midrule
+
+\textbf{Multinomial--Dirichlet}
+&
+$(Y_1,\dots,Y_K)\mid \mathbf p\sim \mathrm{Mult}(n,\mathbf p)$
+&
+$\mathbf p$
+&
+$\mathbf p\sim \mathrm{Dir}(\alpha_1,\dots,\alpha_K)$;\quad
+$L(\mathbf p,\mathbf a)=\sum_{i=1}^K(p_i-a_i)^2$
+&
+\parbox[t]{\linewidth}{%
+Let $\alpha_0=\sum_{i=1}^K\alpha_i$. Posterior:
+$\mathbf p\mid \mathbf y\sim \mathrm{Dir}(\alpha_1+y_1,\dots,\alpha_K+y_K)$.\\
+Mean: $\E[p_i\mid \mathbf y]=\dfrac{\alpha_i+y_i}{\alpha_0+n}
+= w\,\dfrac{\alpha_i}{\alpha_0}+(1-w)\,\dfrac{y_i}{n}$,\;
+$w=\dfrac{\alpha_0}{\alpha_0+n}$.\\
+Bayes rule: $d_{B,i}(\mathbf y)=\E[p_i\mid \mathbf y]$.\\
+Bayes risk: $r_B=\E\big[\sum_{i=1}^K\Var(p_i\mid \mathbf Y)\big]
+=\dfrac{\alpha_0^2-\sum_{i=1}^K\alpha_i^2}{\alpha_0(\alpha_0+1)(\alpha_0+n)}$.} \\
+
+\bottomrule
+\end{tabular}
+\caption{Common conjugate Bayes rules and Bayes risks under squared-error loss.}
+\label{tab:conjugate-bayes}
+\end{sidewaystable}

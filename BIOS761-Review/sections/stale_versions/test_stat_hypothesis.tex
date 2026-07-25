@@ -1,0 +1,422 @@
+\section{Testing Statistical Hypotheses (Chapter 2)}
+This note summarizes only Chapter 2 of the BIOS761 lecture notes, namely the chapter on testing statistical hypotheses. (See Notes p.~1.)
+
+\begin{block}
+\textbf{Big-picture map of the chapter.}
+\begin{enumerate}
+    \item The chapter starts from the clean benchmark problem: simple null versus simple alternative. In this case, the right notion of optimality is exact finite-sample power maximization under a size constraint, and the Neyman-Pearson lemma gives the complete answer. (See Notes pp.~1--9.)
+    \item It then asks what survives when $H_0$ and $H_1$ are composite. The answer is: exact UMP tests usually do \emph{not} exist, but they do exist for one-sided problems in families with monotone likelihood ratio (MLR), so the simple-vs-simple likelihood-ratio logic is generalized through structure on the model. (See Notes pp.~19--41.)
+    \item After that, the notes move from exact optimality to more general test constructions. The likelihood ratio test (LRT) is introduced as the default frequentist procedure for general hypotheses, and many familiar tests (such as $t$- and $F$-tests) are recovered as special cases. (See Notes pp.~47--84.)
+    \item Since exact null distributions are often difficult to derive in general parametric problems, the chapter then develops the large-sample theory of LR, Wald, and score tests, proves their asymptotic $\chi^2$ limits, and shows that these three procedures are asymptotically equivalent. (See Notes pp.~84--106.)
+    \item The notes next branch in two directions: multinomial goodness-of-fit / Pearson $\chi^2$ theory on the one hand, and Bayesian hypothesis testing via Bayes factors on the other. (See Notes pp.~106--134.)
+    \item The final part studies two extensions of the testing viewpoint: comparing procedures through local asymptotic power and Pitman efficiency, and inverting tests to build confidence bounds, confidence sets, and their Bayesian analogues (HPD / credible regions). (See Notes pp.~134--189.)
+\end{enumerate}
+\end{block}
+
+\begin{mybox}
+\textbf{Supplementary problem-solving hierarchy for Chapter 2.}
+\begin{enumerate}
+    \item First ask whether the problem falls into one of the rare settings with exact optimal tests: simple-versus-simple (NP), or one-sided one-parameter problems with MLR / exponential-family structure.\footnote{Supplementary insert ``[important] hypothesis-testing-overview.pdf''.}
+    \item If not, ask whether the hypotheses are nested. If they are, the likelihood ratio test is the most systematic fallback because it can always be constructed in nested parametric models.\footnote{Supplementary insert ``[important] hypothesis-testing-overview.pdf''.}
+    \item After deriving a candidate test statistic, always try to find its \emph{exact finite-sample null distribution} before turning to asymptotics; asymptotic chi-square theory is the fallback, not the first choice.\footnote{Supplementary insert ``[important] hypothesis-testing-overview.pdf''.}
+    \item If asymptotics are necessary, LR and Wald are usually the default practical options; score tests become attractive when the constrained MLE under $H_0$ is much easier to compute than the unrestricted MLE.\footnote{Supplementary insert ``[important] hypothesis-testing-overview.pdf''.}
+\end{enumerate}
+\end{mybox}
+
+\subsection{Basic setup and the simple-vs-simple benchmark}
+\subsubsection{Core objects}
+\begin{itemize}
+    \item A testing problem starts with a model $\{p_\theta(x): \theta \in \Theta\}$ and a null / alternative pair $H_0:\theta \in \Theta_0$ versus $H_1:\theta \in \Theta_1$, where the test procedure is represented by a critical function $\phi(x)$. (See Notes pp.~1--2.)
+    \item The size (or significance level) is the type I error probability under $H_0$, while the power is the probability of rejection under $H_1$; in the simple-vs-simple case, the chapter formulates testing as ``maximize power subject to a size constraint''. (See Notes pp.~2--3.)
+    \item The simple-vs-simple problem is the foundation for the rest of the chapter because it is the only setting where exact finite-sample optimality is completely explicit. (See Notes pp.~2--4.)
+\end{itemize}
+
+\subsubsection{Neyman-Pearson lemma}
+The Neyman-Pearson (NP) lemma says that for testing $P_0$ versus $P_1$, the most powerful level-$\alpha$ test rejects when the likelihood ratio $p_1(x)/p_0(x)$ is sufficiently large, with possible randomization on the boundary where $p_1(x)=kp_0(x)$. (See Notes pp.~3--6.)
+
+This result is the prototype for the whole chapter: once we know what the optimal test looks like in the simple-vs-simple case, later sections try to preserve this threshold structure under additional assumptions or asymptotically. (See Notes pp.~3--4, 20--27, 84--100.)
+
+Two practical interpretations are important.
+\begin{itemize}
+    \item The NP test depends only on the two densities with respect to a common dominating measure, so the result applies even when the two hypotheses are not embedded in a single parametric family. (See Notes pp.~7--8.)
+    \item Randomization is needed only to hit the target size exactly when the null distribution is discrete or has mass on the LR boundary; in continuous problems, the randomization constant $\gamma$ is often $0$. (See Notes pp.~8--10.)
+\end{itemize}
+
+The first corollary is conceptually useful: for a nontrivial simple-vs-simple problem, the power of the most powerful level-$\alpha$ test is strictly larger than $\alpha$. (See Notes pp.~5, 8.)
+
+\begin{mybox}
+\textbf{How to find a most powerful NP test.}
+\begin{enumerate}
+    \item Write down the likelihood ratio $p_1(x)/p_0(x)$ and simplify it until the rejection region is expressed through a statistic $T(x)$. (See Notes pp.~3--6, 8--10.)
+    \item Use monotone transformations freely: if $p_1/p_0 > k$ is equivalent to $T(x) > c$, the test is determined by $T(x)$. (See Notes pp.~10--16.)
+    \item Choose the cutoff using the \emph{null} distribution of $T(x)$, not the alternative distribution. If the null is discrete, solve $\alpha = P_{\theta_0}(T>c) + \gamma P_{\theta_0}(T=c)$ for $(c,\gamma)$. (See Notes pp.~9--13.)
+    \item In continuous models, look for a pivot or a standard null law after scaling; this is how the chapter recovers chi-square and $t$ forms in Examples 2.2 and 2.15. (See Notes pp.~14--16, 51--58.)
+\end{enumerate}
+\end{mybox}
+
+\subsubsection{Representative examples}
+\begin{itemize}
+    \item Example 2.1: iid Poisson$(\theta)$, testing $\theta_0$ versus $\theta_1 > \theta_0$. The LR is monotone in $\sum_i X_i$, so the NP test rejects for large total count; because the null law is Poisson and discrete, randomization may be needed. (See Notes pp.~10--13.)
+    \item Example 2.2: iid $N(\mu,\sigma^2)$ with $\mu$ known, testing $\sigma_0^2$ versus $\sigma_1^2 > \sigma_0^2$. The NP test rejects for large $\sum_i (X_i-\mu)^2$, and the null distribution converts this to a chi-square cutoff. (See Notes pp.~14--16.)
+    \item Example 2.3: iid $U(0,\theta)$. The exact NP test is unusual: it rejects with probability $1$ when $X_{(n)} > \theta_0$ but randomizes with probability $\alpha$ when $X_{(n)} \le \theta_0$. (See Notes pp.~16--19.)
+\end{itemize}
+
+\subsection{Composite hypotheses, power functions, and UMP tests}
+\subsubsection{Why a new concept is needed}
+When $H_0$ and $H_1$ are composite, there is no single pair of distributions to compare, so the notes replace ``most powerful'' by the stronger requirement of \emph{uniformly most powerful} (UMP): a level-$\alpha$ test whose power dominates every other level-$\alpha$ test at every parameter value in $\Theta_1$. (See Notes pp.~19--20.)
+
+The power function $\beta(\theta)=E_\theta[\phi(X)]$ becomes a central object from this point on, because testing quality is now compared across an entire alternative parameter set rather than at one fixed point. (See Notes pp.~19--20.)
+
+\subsubsection{MLR and the main UMP theorem}
+The major structural condition is monotone likelihood ratio (MLR): the ratio $p_{\theta'}(x)/p_{\theta}(x)$ must be nondecreasing in some statistic $T(x)$ whenever $\theta' > \theta$. (See Notes pp.~20--21.)
+
+Under MLR, Theorem 2.2 shows that for testing $H_0:\theta \le \theta_0$ versus $H_1:\theta > \theta_0$, there exists a UMP level-$\alpha$ test of threshold form
+\[
+\phi(x)=
+\begin{cases}
+1, & T(x) > k,\\
+\gamma, & T(x) = k,\\
+0, & T(x) < k,
+\end{cases}
+\]
+and its power function is increasing in $\theta$. (See Notes pp.~21--23.)
+
+The dual theorem gives the symmetric statement for $H_0:\theta \ge \theta_0$ versus $H_1:\theta < \theta_0$: reject for \emph{small} $T(x)$, and the power function is decreasing in $\theta$. (See Notes pp.~23--24.)
+
+An extra useful fact in Theorem 2.2 is that the same rejection rule works again if the boundary point $\theta_0$ is shifted to another value $\theta'$, and among tests with the same size at $\theta_0$ it also minimizes power on the ``wrong'' side of the null. This is one reason monotone families are so tractable. (See Notes pp.~21--24.)
+
+Two interpretations are especially important.
+\begin{itemize}
+    \item UMP existence is \emph{not} generic; it is a special consequence of one-sided hypotheses plus MLR structure. (See Notes pp.~20--24.)
+    \item The UMP test has the same threshold form as the simple-vs-simple NP test. What changes is the argument proving that one threshold works uniformly over the entire alternative. (See Notes pp.~21--27.)
+\end{itemize}
+
+\begin{mybox}
+\textbf{How to find a UMP test for a one-parameter problem.}
+\begin{enumerate}
+    \item First check whether the family has MLR in some statistic $T(x)$; in many standard models, this is the natural sufficient statistic. (See Notes pp.~20--21, 27--35.)
+    \item If MLR holds and the alternative is one-sided, the candidate UMP test is immediately ``reject for large $T$'' or ``reject for small $T$'' depending on the direction of the alternative. (See Notes pp.~21--24.)
+    \item Choose the cutoff using the boundary null value $\theta_0$, because size is controlled at the least favorable null point in these monotone families. (See Notes pp.~21--24, 30--35.)
+    \item If the model is a one-parameter exponential family
+    \[
+    p_\theta(x)=c(\theta)\exp\{Q(\theta)T(x)\}h(x),
+    \]
+    then the sign of monotonicity of $Q(\theta)$ tells you whether the rejection region should be $T$ large or $T$ small. (See Notes pp.~32--35.)
+\end{enumerate}
+\end{mybox}
+
+\subsubsection{Representative examples and lessons}
+\begin{itemize}
+    \item Example 2.4: iid $N(\theta,1)$, testing $\theta \le \theta_0$ versus $\theta > \theta_0$. This is the prototype showing how a simple-vs-simple NP solution becomes UMP because the same cutoff works for all $\theta_1 > \theta_0$ and the power function is monotone. (See Notes pp.~24--27.)
+    \item Examples 2.5--2.8: Poisson, $U(0,\theta)$, hypergeometric, and general one-parameter exponential families. These examples train the main recognition skill of this chapter: identify the MLR statistic, then threshold it. (See Notes pp.~27--33.)
+    \item Examples 2.9--2.11 catalog common MLR and non-MLR families. In particular, the Cauchy location family is a useful counterexample: not every one-parameter family supports UMP one-sided tests via MLR. (See Notes pp.~33--34.)
+    \item Example 2.12 shows that the MLR statistic need not be a sum of raw observations; for Gamma$(\theta,\beta)$ with known $\beta$, the relevant statistic is $\sum_i \log X_i$. (See Notes pp.~34--36.)
+    \item The continuation of Example 2.3 is conceptually important. The notes show that UMP tests need not be unique, but tests based on sufficient statistics can have cleaner behavior and avoid unnecessary randomization. (See Notes pp.~36--38.)
+    \item Example 2.13 is a good reminder that ``not exponential family'' does \emph{not} mean ``hopeless''; one can still prove MLR directly from the density ratio. (See Notes pp.~38--41.)
+\end{itemize}
+
+\subsection{Consistency and likelihood ratio tests}
+\subsubsection{Consistency of NP-type tests}
+Before introducing the general LRT, the notes prove a large-sample fact about NP-type rules. Using Hellinger affinity $\rho(P,Q)$, they show that for iid samples the affinity of the product measures is $\rho(P_n,Q_n)=\rho(P,Q)^n$, so the two models become asymptotically distinguishable unless they are the same distribution. (See Notes pp.~42--45.)
+
+Theorem 2.3 then shows that NP-type likelihood-ratio rules are both size-consistent and power-consistent: under mild boundedness of the threshold sequence $k_n$, both type I and type II errors go to $0$ as $n \to \infty$. (See Notes pp.~45--47.)
+
+\subsubsection{Likelihood ratio test as the default general procedure}
+For testing $H_0:\theta \in \Theta_0$ versus $H_1:\theta \in \Theta_1$, the LRT is defined by
+\[
+\Lambda(x)=\frac{\sup_{\theta \in \Theta_0} p(x \mid \theta)}{\sup_{\theta \in \Theta_0 \cup \Theta_1} p(x \mid \theta)},
+\]
+and rejects for small values of $\Lambda$. (See Notes pp.~47--49.)
+
+The interpretation is simple and important: compare the best explanation of the observed data under the null with the best explanation available anywhere in the model. This is why the LRT is the main frequentist construction once exact NP optimality is unavailable. (See Notes pp.~48--49.)
+
+\begin{mybox}
+\textbf{How to derive an LRT in practice.}
+\begin{enumerate}
+    \item Maximize the likelihood under $H_0$ and under the full parameter space separately. (See Notes pp.~47--49, 51--64.)
+    \item Form $\Lambda$ and then apply any monotone transformation that makes the rejection region easier to read; many textbook tests appear after algebraic simplification. (See Notes pp.~49--64.)
+    \item If an exact null distribution is available, calibrate the cutoff exactly. If not, either identify an equivalent classical statistic (such as $t$ or $F$) or use asymptotic LR theory later in the chapter. (See Notes pp.~51--64, 84--100.)
+    \item In nonregular problems with support depending on $\theta$, check the MLE and the null / full likelihoods carefully; order statistics often appear naturally. (See Notes pp.~74--84.)
+\end{enumerate}
+\end{mybox}
+
+\subsubsection{Representative examples}
+\begin{itemize}
+    \item Example 2.14: Poisson mean, testing $\theta=\theta_0$ versus $\theta \ne \theta_0$. The LRT is expressed through $\bar X$, but the exact null distribution of the raw LR statistic has no convenient closed form. (See Notes pp.~49--51.)
+    \item Example 2.15: normal mean with unknown variance. The LRT simplifies to the Student $t$-test, so the chapter recovers the familiar two-sided and one-sided $t$ procedures from first principles. (See Notes pp.~51--58.)
+    \item Example 2.16: nested Gaussian linear models. The LRT is algebraically equivalent to the classical $F$-test, which is one of the cleanest illustrations that ``likelihood ratio'' and ``standard regression test'' are often the same object. (See Notes pp.~58--64.)
+    \item Examples 2.17--2.21 show that the same LRT recipe works for two-sample exponential models and for nonregular support-dependent models; in several of these problems the rejection region is determined by order statistics such as $X_{(1)}$ or $X_{(n)}$. (See Notes pp.~64--84.)
+\end{itemize}
+
+\subsection{General LR, Wald, and score tests}
+\subsubsection{Unified formulation}
+The notes then move to a general smooth constraint problem
+\[
+H_0:\theta = g(\vartheta)
+\qquad \text{or equivalently} \qquad
+H_0:R(\theta)=0,
+\]
+with $r$ restrictions. (See Notes pp.~84--86.)
+
+Three standard asymptotic test statistics are introduced.
+
+\begin{itemize}
+    \item LR: compare the constrained and unconstrained maximized likelihoods. (See Notes pp.~84--85.)
+    \item Wald: plug the unrestricted estimator into the constraint and scale by the Fisher information. (See Notes p.~85.)
+    \item Score: evaluate the score at the constrained estimator and scale by the constrained information. (See Notes pp.~85--86.)
+\end{itemize}
+
+\red{Change notation to $\hat\theta$ and $\hat\theta_0$?}
+
+Let $\hat\theta$ be the unrestricted MLE, let $\tilde\theta = g(\hat\vartheta)$ be the constrained MLE under $H_0$, let
+\[
+C(\theta)=\frac{\partial R(\theta)}{\partial \theta},
+\qquad
+s_n(\theta)=\frac{\partial \log \ell(\theta)}{\partial \theta},
+\]
+and let $I_n(\theta)$ denote the Fisher information based on $X_1,\dots,X_n$. As a reminder, under i.i.d.\ sampling,
+\[
+I_n(\theta)=n I_1(\theta),
+\qquad
+I_1(\theta)=\mathbb E_\theta\!\left[
+\left(
+\frac{\partial}{\partial \theta}\log f_\theta(X_1)
+\right)
+\left(
+\frac{\partial}{\partial \theta}\log f_\theta(X_1)
+\right)^\top
+\right]
+= -\E\left[
+    \frac{\partial^2}{\partial\theta^2} log f_\theta(X_1)
+\right].
+\]
+Then the three standard statistics are (See Notes pp.~84--86, 88.)
+\[
+\lambda_n
+=
+\frac{\sup_{\theta\in\Theta_0}\ell(\theta)}{\sup_{\theta\in\Theta}\ell(\theta)}
+=
+\frac{\ell(\tilde\theta)}{\ell(\hat\theta)},
+\]
+\[
+W_n
+=
+R(\hat\theta)^\top
+\Bigl\{
+[C(\hat\theta)]^\top [I_n(\hat\theta)]^{-1} C(\hat\theta)
+\Bigr\}^{-1}
+R(\hat\theta),
+\]
+\[
+R_n
+=
+s_n(\tilde\theta)^\top [I_n(\tilde\theta)]^{-1} s_n(\tilde\theta).
+\]
+
+The computational tradeoff is worth remembering: Wald needs only the unrestricted estimator, score needs only the constrained estimator, and LR needs both. (See Notes p.~86.)
+
+\subsubsection{Asymptotic null distributions}
+Under the same regularity conditions used for asymptotic MLE theory, Theorem 2.4 proves Wilks' phenomenon:
+\[
+-2 \log \lambda_n \overset{d}{\to} \chi_r^2
+\quad \text{under } H_0,
+\]
+where $r = \dim(\Theta)-\dim(\Theta_0)$ is the number of constaints. (See Notes pp.~87--96.)
+
+Theorem 2.5 proves that the Wald and score statistics have the same asymptotic null law:
+\[
+W_n \overset{d}{\to} \chi_r^2,
+\qquad
+R_n \overset{d}{\to} \chi_r^2
+\qquad \text{under } H_0.
+\]
+Hence, in regular problems,
+\[
+-2 \log \lambda_n,\quad W_n,\quad R_n
+\]
+all converge to the same $\chi_r^2$ limit under $H_0$, so LR, Wald, and score tests are asymptotically equivalent to first order. (See Notes pp.~97--100.)
+
+\red{Add: How to prove these results using Taylor expansion and CLT?}
+
+This is the main asymptotic message of the chapter: when exact finite-sample distributions are hard, these three procedures are interchangeable to first order under $H_0$. (See Notes pp.~86--100.)
+
+\red{For a concrete problem, we can aslo derive the limiting distribution of $-2log\lambda_n$ by ourselves, using CLT, Taylor expansion or delta-method.}
+
+\begin{mybox}
+\textbf{How to use general asymptotic LR / Wald / score theory.}
+\begin{enumerate}
+    \item Rewrite the hypothesis in the form $R(\theta)=0$ and count the number of independent restrictions $r$. (See Notes pp.~84--85, 91.)
+    \item Compute the unrestricted MLE, the constrained MLE, or both depending on which statistic is easiest. (See Notes pp.~84--86.)
+    \item Use the asymptotic critical value $\chi^2_{r,1-\alpha}$ for LR, Wald, or score unless the problem is one of the earlier special cases with an exact finite-sample null law. (See Notes pp.~88--100.)
+    \item In regression models, the formulas often collapse to a simple ``full minus reduced log-likelihood'' form for LR and quadratic forms for Wald / score. (See Notes pp.~100--106.)
+\end{enumerate}
+\end{mybox}
+
+\red{log-likelihood theory is the skeleton behind all three tests.}
+
+\subsubsection{Representative example}
+Example 2.24 works out LR, Wald, and score tests for logistic regression. It is important because it shows the general theory in a model where the MLE has no closed form and must be computed numerically, which is typical in modern likelihood problems. (See Notes pp.~100--106.)
+
+\subsection{Chi-square tests and goodness-of-fit}
+\red{I did not learn this part.}
+
+For multinomial counts, the notes derive Pearson's chi-square statistic and a modified version by applying the CLT to the vector of cell proportions. (See Notes pp.~106--108.)
+
+Theorem 2.6 gives the abstract quadratic-form result behind Pearson-type statistics, and the practical takeaway is that both Pearson's $\chi^2$ and the version with observed counts in the denominator have asymptotic chi-square limits. (See Notes pp.~108--110.)
+
+For goodness-of-fit with a \emph{known} null distribution, Example 2.25 says: partition the sample space, count frequencies, and use the multinomial chi-square test. (See Notes pp.~110--111.)
+
+For goodness-of-fit with \emph{estimated} nuisance parameters, Theorem 2.7 shows that the asymptotic degrees of freedom become $k-s-1$, where $k$ is the number of cells and $s$ is the number of estimated parameters in $p(\theta)$. (See Notes pp.~111--114.)
+
+\begin{mybox}
+\textbf{Goodness-of-fit strategy.}
+\begin{enumerate}
+    \item Partition the sample space into $k$ disjoint sets and convert the data to multinomial cell counts. (See Notes pp.~110--111.)
+    \item If the null probabilities are known, use the standard Pearson statistic with degrees of freedom $k-1$. (See Notes pp.~107--110.)
+    \item If the null probabilities depend on an estimated $s$-dimensional parameter, replace them by fitted probabilities $p_j(\hat\theta)$ and reduce the degrees of freedom to $k-s-1$. (See Notes pp.~111--114.)
+\end{enumerate}
+\end{mybox}
+
+\subsection{Bayesian hypothesis testing}
+\subsubsection{Bayes factors}
+The Bayesian viewpoint replaces type I / type II error control by posterior comparison of hypotheses. The central quantity is the Bayes factor
+\[
+B=\frac{p(x \mid H_0)}{p(x \mid H_1)},
+\]
+which is also the posterior-to-prior odds ratio in favor of $H_0$. (See Notes pp.~114--117.)
+
+For composite hypotheses, the key difference from the LRT is that
+\[
+p(x \mid H_i)=\int_{\Theta_i} p(x \mid \theta, H_i)\lambda(\theta \mid H_i)\, d\theta,
+\]
+so Bayesian testing \emph{integrates} over parameter uncertainty rather than maximizing over it. (See Notes pp.~117--118.)
+
+The notes emphasize three advantages of Bayes factors: they do not require nested models, they handle complicated composite hypotheses naturally, and they have a direct odds-ratio interpretation. (See Notes pp.~117--118.)
+
+They also emphasize two caveats: Bayes factors require proper priors and can be sensitive to the prior or hyperparameter choice. (See Notes pp.~118--119.)
+
+The clean bridge back to the frequentist part of the chapter is that in the simple-versus-simple case, the Bayes factor reduces to the ordinary likelihood ratio, so the Bayesian and NP viewpoints coincide at the benchmark problem. (See Notes p.~118.)
+
+\begin{mybox}
+\textbf{How to compute and interpret a Bayes factor.}
+\begin{enumerate}
+    \item Specify the prior probability of each hypothesis and the prior density within each hypothesis. (See Notes pp.~115--119.)
+    \item Compute the marginal likelihood under each hypothesis by integrating the likelihood against the corresponding prior. (See Notes pp.~117--118, 130--132.)
+    \item Form $B=p(x \mid H_0)/p(x \mid H_1)$. Large $B$ favors $H_0$. (See Notes pp.~116--118.)
+    \item If desired, convert $B$ into posterior model or posterior hypothesis probabilities using prior model probabilities. (See Notes pp.~122--125.)
+\end{enumerate}
+\end{mybox}
+
+\subsubsection{Representative examples and model selection}
+\begin{itemize}
+    \item Examples 2.26--2.27 compute Bayes factors in normal models, first for simple-versus-simple and then for simple-versus-composite testing. (See Notes pp.~119--122.)
+    \item The notes then relate Bayes factors to posterior model probabilities and explain how this generalizes to finite model spaces, which is the Bayesian view of model selection. (See Notes pp.~122--125.)
+    \item BIC is presented as a criterion with Bayesian motivation that avoids the full burden of specifying priors over a large model space. (See Notes pp.~125--127.)
+    \item Examples 2.28--2.30 discuss variable subset selection and nonstandard composite hypotheses, illustrating that the Bayesian framework can accommodate hypothesis sets that look awkward from a classical testing perspective. (See Notes pp.~127--134.)
+\end{itemize}
+
+\subsection{Local power and Pitman efficiency}
+The chapter next compares tests through \emph{local} alternatives because fixed alternatives make many reasonable tests consistent, so fixed-$\theta$ power is not very informative asymptotically. (See Notes pp.~134--142.)
+
+The one-sample $t$-test and the sign test are both analyzed under alternatives approaching the null at rate $n^{-1/2}$, and the limiting powers depend on Gaussian shifts determined by their respective efficacy constants. (See Notes pp.~134--138.)
+
+Pitman efficiency is then defined as the limiting sample-size ratio needed for two tests to have the same asymptotic power against the same local alternatives. (See Notes pp.~138--140.)
+
+The general result is that
+\[
+e_{1,2} = \frac{(\mu_1/\sigma_1)^2}{(\mu_2/\sigma_2)^2},
+\]
+so efficiency is the ratio of \emph{efficacies}. In many problems, once the local asymptotic mean shift and variance are known, the efficiency calculation is immediate. (See Notes pp.~141--145.)
+
+The final example in this section gives the efficacy of the two-sample $t$-test, showing how the same local-power logic extends beyond one-sample settings. (See Notes pp.~146--147.)
+
+\begin{mybox}
+\textbf{Supplementary strategy for local-power / Pitman-efficiency questions.}
+\begin{enumerate}
+    \item Put the alternative in local form, typically $\theta_n = \theta_0 + c_n/\sqrt{n}$ with $c_n \to c$.\footnote{Supplementary inserts ``page138-clarifications.pdf'' and ``page145-clarifications.pdf''.}
+    \item Rewrite the test statistic as
+    \[
+    \text{(centered stochastic part under the local law)} + \text{(deterministic local shift)}.
+    \]
+    The first part is usually handled by CLT; the second is handled by Taylor expansion or the delta method.\footnote{Supplementary inserts ``page138-clarifications.pdf'', ``page145-clarifications.pdf'', and ``theorem2.6-and-page138.pdf''.}
+    \item Read off the limiting mean shift of the asymptotic normal law. Its square (after standardization) is the \emph{efficacy}; the Pitman efficiency is the ratio of efficacies.\footnote{Supplementary inserts ``page138-clarifications.pdf'' and ``page145-clarifications.pdf''.}
+    \item In short: center, linearize, identify the Gaussian shift, then compare efficacies rather than raw fixed-alternative powers.\footnote{Supplementary inserts ``page138-clarifications.pdf'' and ``page145-clarifications.pdf''.}
+\end{enumerate}
+\end{mybox}
+
+\subsection{Confidence bounds and confidence regions from tests}
+\subsubsection{Test inversion}
+The chapter then turns testing results into interval estimation. A lower confidence bound $\theta_L(X)$ at level $1-\alpha$ is defined by $P_\theta\{\theta_L(X) \le \theta\} \ge 1-\alpha$, and more generally a confidence set $S(X)$ must cover the true parameter with probability at least $1-\alpha$. (See Notes pp.~147--149.)
+
+Theorem 2.8 formalizes the inversion principle: if $A(\theta_0)$ is the acceptance region of a level-$\alpha$ test of $H_0:\theta=\theta_0$, then
+\[
+S(x)=\{\theta: x \in A(\theta)\}
+\]
+is a confidence set with confidence level $1-\alpha$. (See Notes pp.~149--151.)
+
+If the acceptance regions come from UMP tests, the resulting confidence set is best in the corresponding uniformly most accurate sense. So the chapter is not treating testing and confidence sets as separate topics; one is obtained by inverting the other. (See Notes pp.~149--153.)
+
+\subsubsection{MLR and uniformly most accurate bounds}
+Theorem 2.9 specializes the inversion idea to MLR families. If $T(X)$ has MLR and a continuous cdf $F_\theta(t)$, then uniformly most accurate one-sided confidence bounds exist, and the lower bound is obtained by solving
+\[
+F_{\hat\theta}(t)=1-\alpha
+\]
+for $\hat\theta$ at the observed value $t=T(x)$. (See Notes pp.~151--154.)
+
+This is one of the deepest structural parallels in the chapter:
+\begin{itemize}
+    \item MLR gives UMP one-sided tests. (See Notes pp.~20--24.)
+    \item Inverting those tests gives uniformly most accurate one-sided confidence bounds. (See Notes pp.~151--154.)
+\end{itemize}
+
+\begin{mybox}
+\textbf{How to construct confidence bounds / intervals from Chapter 2.}
+\begin{enumerate}
+    \item If the model has an exact pivotal quantity, use the pivot directly; this is often the fastest route. (See Notes pp.~154--162, 156.)
+    \item If the model has MLR and one-sided UMP tests, invert the acceptance region of the test. Solve the cdf equation for the parameter to obtain the bound. (See Notes pp.~149--154.)
+    \item In nuisance-parameter problems, make sure the coverage statement is uniform over the nuisance parameter as well. (See Notes pp.~164--166.)
+    \item In normal and linear-model problems, many classical confidence intervals are simply inversions of the $t$-, $F$-, or LR tests developed earlier. (See Notes pp.~158--170.)
+\end{enumerate}
+\end{mybox}
+
+\begin{mybox}
+\textbf{Supplementary discrete-data interval tactic.}
+\begin{itemize}
+    \item For discrete models such as Binomial or Poisson, exact confidence intervals are most naturally obtained by inverting \emph{exact} tests rather than using normal approximations.\footnote{Supplementary insert ``interval-estimation-discrete-rv.pdf''.}
+    \item Because of discreteness, such exact intervals are often conservative: the actual coverage is at least $1-\alpha$, but the interval may be wider than an asymptotic one.\footnote{Supplementary insert ``interval-estimation-discrete-rv.pdf''.}
+    \item Boundary observations often produce one-sided intervals automatically (for example, zero counts or all successes).\footnote{Supplementary insert ``interval-estimation-discrete-rv.pdf''.}
+    \item For Poisson problems, it is often useful to exploit the Gamma / chi-square connection to express exact bounds through chi-square quantiles.\footnote{Supplementary inserts ``interval-estimation-discrete-rv.pdf'' and ``gamma-chi-square-connection.pdf''.}
+\end{itemize}
+\end{mybox}
+
+\subsubsection{Representative examples}
+\begin{itemize}
+    \item Example 2.31: exponential model. The upper bound and two-sided interval are built from the Gamma / chi-square pivot induced by $\sum_i X_i$. (See Notes pp.~154--156.)
+    \item Example 2.32: $U(0,\theta)$ model. The interval is derived from the pivotal quantity $X_{(n)}/\theta$. (See Notes pp.~156--158.)
+    \item Example 2.33: normal mean and variance. The notes recover the standard intervals for $\sigma^2$, $\mu$, and a joint confidence region for $(\mu,\sigma^2)$ from independent pivotals. (See Notes pp.~158--163.)
+    \item Examples 2.34--2.35 explain how nuisance-parameter and regression confidence sets arise by the same inversion logic, including confidence regions for $A\beta$ in the linear model. (See Notes pp.~164--170.)
+\end{itemize}
+
+\subsection{Bayesian interval analogues: HPD regions and prior elicitation}
+The Bayesian analogue of a confidence interval is an HPD region or a credible set. An HPD region contains posterior probability $1-\alpha$ and consists of the points with highest posterior density; a credible set is usually formed from posterior quantiles. (See Notes pp.~170--173.)
+
+The practical distinction is:
+\begin{itemize}
+    \item If the posterior is symmetric, HPD region and credible set coincide. (See Notes pp.~172--173.)
+    \item If the posterior is skewed, credible sets are easier to construct, while HPD regions retain the minimum-volume interpretation. (See Notes pp.~173--174.)
+\end{itemize}
+
+Examples 2.36--2.37 show that under standard noninformative priors in normal models, Bayesian HPD / credible intervals can coincide algebraically with familiar frequentist intervals, although the interpretation is different. (See Notes pp.~174--180.)
+
+The chapter closes with prior elicitation. The notes distinguish noninformative versus informative priors, discuss Jeffreys priors, explain why scale parameters require different prior choices from location parameters, and give common conjugate priors for normal mean / precision models. (See Notes pp.~180--189.)
+
+\begin{mybox}
+\textbf{Final conceptual summary.}
+\begin{itemize}
+    \item \underline{Exact finite-sample optimality:} NP for simple hypotheses, UMP for one-sided MLR families. (See Notes pp.~3--24.)
+    \item \underline{General frequentist construction:} LRT, then LR / Wald / score asymptotics when exact null laws are unavailable. (See Notes pp.~47--106.)
+    \item \underline{Model-comparison viewpoint:} Bayes factors and posterior model probabilities. (See Notes pp.~114--134.)
+    \item \underline{Comparison of procedures:} local power and Pitman efficiency. (See Notes pp.~134--146.)
+    \item \underline{Intervals from tests:} invert acceptance regions to get confidence bounds and sets; use posterior density to get HPD regions in the Bayesian setting. (See Notes pp.~147--189.)
+\end{itemize}
+\end{mybox}
