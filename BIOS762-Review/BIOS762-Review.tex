@@ -1011,7 +1011,7 @@ to construct a CR for $\sigma^2$, where $\hat\sigma^2=\mathrm{MSE}$. Then, for a
     \frac{(\Lambda'\hat\beta-\Lambda'\beta)'(\Lambda'(X'X)^{-}\Lambda)^{-}(\Lambda'\hat\beta-\Lambda'\beta)}{\sigma^2}
     \sim \chi^2(r(\Lambda)).
 \]
-\footnote{For a fixed $\sigma^2$, one can also construct the CR for $\Lambda'\beta$ from $\Lambda'\hat\beta - \Lambda'\beta \sim N_s(0, \sigma^2 \Lambda'(X'X)^- \Lambda)$. See Homework 4 Question 6 for an example.}
+\footnote{Fixing $\sigma^2$, for a scalar $\lambda'\beta$, one can also construct its CI from $\lambda'\hat\beta - \lambda'\beta \sim N_s(0, \sigma^2 \lambda'(X'X)^- \lambda)$. See Homework 4 Question 6 for an example.}
 As these two quantities are independent, we can form a joint CR with coverage $(1-\alpha)(1-\delta)\times 100\%$ as
 \[
   \left\{
@@ -1411,7 +1411,7 @@ For each $\xi\in\Xi$, let $\E_\xi$ and $\Cov_\xi$ denote expectation and covaria
 \tag{\blue{Score equation}}\label{eq:Bartlett_score_eq}\\
 \E_\xi(\partial^2_{j,k} \ell_n) + \E_\xi(\partial_j \ell_n \, \partial_k \ell_n) &= 0
 \quad\Big(\text{i.e., }\ I_n(\xi) := \E_\xi[\ell_n' \ell_n'^\top] = -\E_\xi[\ell_n'']\Big), 
-\tag{\blue{Fisher info}} \label{eq:Bartlett_fisher_info}\\
+\tag{\blue{Fisher information}} \label{eq:Bartlett_fisher_info}\\
 \E_\xi(\partial^3_{j,k,l} \ell_n) 
 &+ \Cov_{\xi}(\partial^2_{j,k} \ell_n, \partial_l \ell_n)
 + \Cov_{\xi}(\partial^2_{j,l} \ell_n, \partial_k \ell_n) \nonumber \\
@@ -1419,7 +1419,7 @@ For each $\xi\in\Xi$, let $\E_\xi$ and $\Cov_\xi$ denote expectation and covaria
 + \E_\xi(\partial_l \ell_n \, \partial_j \ell_n \, \partial_k \ell_n) = 0,
 \tag{\blue{Bartlett identity of order 2}} \label{eq:Bartlett_order2}
 \end{align}
-where $j, k, l = 1, \dots, q$, $\partial$ denotes partial differentiation (e.g., $\partial_j = \partial_{\xi_j}$, $\partial^3_{j,k,l} = \partial^3_{\xi_j \xi_k \xi_l}$). $\E_\xi$ indicates that this quantity depends on $\xi$.
+where $j, k, l = 1, \dots, q$, $\partial$ denotes partial differentiation (e.g., $\partial_j = \partial_{\xi_j}$, $\partial^3_{j,k,l} = \partial^3_{\xi_j \xi_k \xi_l}$), and the subscript in $\E_\xi$ and $\Cov_\xi$ indicates dependence on the true parameter $\xi$.
 \footnote{Proof is done using the trick $\partial_j p(u, \xi) = \frac{\partial_j p(u, \xi) }{p(u, \xi)} p(u, \xi) = \Big(\partial_j \log p(u, \xi)\Big) p(u, \xi)$ and exchanging integration and differentiation in $\partial_j \int p(u, \xi) du = 0$.}
 \end{mybox}
 
