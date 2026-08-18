@@ -617,7 +617,7 @@ Finally, if we additionally assume normality of the errors: $\epsilon \sim N_n(0
 \end{enumerate}
 
 \subsection{Generalized least squares}\label{sec:lm-gls}
-As we discussed, OLS is BLUE when $\E[\epsilon]=0$ and $\Cov(\epsilon)=\sigma^2 I_n$ (homoscedasticity). However, when the errors have a more general covariance structure, OLS remains unbiased but is generally \emph{no longer efficient}. This motivates generalized least squares (GLS), which incorporates the covariance structure to obtain the BLUE under $\Cov(\epsilon)=\sigma^2V$.
+As we discussed, OLS is BLUE when $\E[\epsilon]=0$ and $\Cov(\epsilon)=\sigma^2 I_n$ (homoscedasticity). However, when the errors have a more general covariance structure, OLS remains unbiased but is generally \emph{no longer efficient} (i.e., it does not have the smallest variance among linear unbiased estimators). This motivates generalized least squares (GLS), which incorporates the covariance structure to obtain the BLUE under $\Cov(\epsilon)=\sigma^2V$.
 
 In this section, we allow the structure of $\Cov(\epsilon)$ to be general:
 \[
