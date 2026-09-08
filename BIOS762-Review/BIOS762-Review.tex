@@ -813,7 +813,7 @@ Since $C(X)=\mathcal C_0\oplus C(MP)$, the null hypothesis states that the compo
 
 We call $C(MP)$ the \emph{contrast subspace}: it contains the directions along which the mean can depart from $H_0$. Under $H_a$, the mean has a nonzero component in this subspace and $\Lambda'\beta \neq 0$.
 
-The $F$-test is
+For this simplified setting, the $F$-test is
 \[
 F=\frac{\|M_{MP}Y\|_2^2 / r(M_{MP})}{\|(I-M)Y\|_2^2 / r(I-M)} 
 \sim F(r(M_{MP}),\, r(I-M),\, \gamma),
@@ -831,7 +831,8 @@ Conceptually, the F-statistic takes this form:
 \[
 F = \frac{\mathrm{MS}(\text{reduced vs. full})}{\mathrm{MS}(\text{full vs. observed})} =\frac{\mathrm{MS}(\text{component of $Y$ in the contrast subspace $C(MP)$})}{\mathrm{MS}(\text{component of $Y$ in $C(X)^\perp$})}.
 \]
-The numerator compares the reduced model against the full model: the fitted-value difference is $MY-M_0Y=(M-M_0)Y=M_{MP}Y$. Thus, the numerator is the mean square of the component of $Y$ in the contrast subspace $C(MP)$ and measures departure from the null mean space.
+Here, \(\mathrm{MS}\) denotes a mean square: the corresponding sum of squares divided by its associated degrees of freedom.
+The numerator compares the reduced model against the full model: the difference of their fitted-values are $MY-M_0Y=(M-M_0)Y=M_{MP}Y$. Thus, the numerator is the mean square of the component of $Y$ in the contrast subspace $C(MP)$ and measures departure from the null mean space.
 The denominator is simply the full-model MSE and compares the full model against the observations: the full-model residual is $Y-MY=(I-M)Y$. 
 
 
@@ -1397,7 +1398,9 @@ For the observed data $u$, the log-likelihood is
 \[
 \ell_n := \ell_n(\xi) = \log p(u; \xi).
 \]
-Its derivative $\ell_n'(\xi)$ is called the \emph{score function}. Throughout the remaining sections, primes denote derivatives with respect to $\xi$: $\ell_n'(\xi)=\nabla_\xi\ell_n(\xi)$ is the column score vector, and $\ell_n''(\xi):=\nabla_\xi^2\ell_n(\xi)$ is the Hessian matrix.
+Its derivative $\ell_n'(\xi)$ is called the \emph{score function}. 
+
+\textbf{(!) Notation:} Throughout the remaining sections, primes denote derivatives with respect to $\xi$: $\ell_n'(\xi)=\nabla_\xi\ell_n(\xi)$ is the column score vector, and $\ell_n''(\xi):=\nabla_\xi^2\ell_n(\xi)$ is the Hessian matrix. Transposes are denoted by $\top$.
 
 
 \subsubsection{Bartlett identities}
